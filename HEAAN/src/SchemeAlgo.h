@@ -23,6 +23,7 @@ namespace heaan {
 static std::string LOGARITHM = "Logarithm"; ///< log(x)
 static std::string EXPONENT  = "Exponent"; ///< exp(x)
 static std::string SIGMOID   = "Sigmoid"; ///< sigmoid(x) = exp(x) / (1 + exp(x))
+static std::string INVERSESQRT   = "InverseSqrt"; ///< sigmoid(x) = exp(x) / (1 + exp(x))
 
 class SchemeAlgo {
 public:
@@ -33,6 +34,18 @@ public:
 		taylorCoeffsMap.insert(std::pair<std::string, double*>(LOGARITHM,new double[11] {0,1,-0.5,1./3,-1./4,1./5,-1./6,1./7,-1./8,1./9,-1./10}));
 		taylorCoeffsMap.insert(std::pair<std::string, double*>(EXPONENT,new double[11] {1,1,0.5,1./6,1./24,1./120,1./720,1./5040,1./40320,1./362880,1./3628800 }));
 		taylorCoeffsMap.insert(std::pair<std::string, double*>(SIGMOID,new double[11] {1./2,1./4,0,-1./48,0,1./480,0,-17./80640,0,31./1451520,0}));
+		taylorCoeffsMap.insert(std::pair<std::string, double*>(INVERSESQRT,new double[11] {
+			1.0,
+			-1.0/2,
+			3.0/8,
+			-5.0/16,
+			35.0/128,
+			-63.0/256,
+			231.0/1024,
+			-429.0/2048,
+			6435.0/32768,
+			-12155.0/65536,
+			46189.0/262144}));
 	};
 
 
