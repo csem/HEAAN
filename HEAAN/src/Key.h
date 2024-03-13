@@ -11,17 +11,28 @@
 #include <NTL/ZZ.h>
 #include "Params.h"
 
+#include <memory>
+
 namespace heaan {
 
 class Key {
 public:
 
-	uint64_t* rax = new uint64_t[Nnprimes]();
-	uint64_t* rbx = new uint64_t[Nnprimes]();
+    std::unique_ptr<uint64_t[]> rax;
+    std::unique_ptr<uint64_t[]> rbx;
 
-	Key();
+    Key() {
+        rax.reset(new uint64_t[heaan::Nnprimes]);
+        rbx.reset(new uint64_t[heaan::Nnprimes]);
+    }
 
-	virtual ~Key();
+    ~Key() = default;  // Automatic memory deletion
+
+    // Move constructor (new)
+    Key(Key&& other) noexcept {
+        rax = std::move(other.rax);
+        rbx = std::move(other.rbx);
+    }	
 };
 
 }  // namespace heaan

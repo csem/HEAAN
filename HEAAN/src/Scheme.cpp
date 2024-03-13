@@ -40,8 +40,8 @@ void Scheme::addEncKey(SecretKey& secretKey) {
 	ring.subFromGaussAndEqual(bx, QQ);
 
 	Key* key = new Key();
-	ring.CRT(key->rax, ax, nprimes);
-	ring.CRT(key->rbx, bx, nprimes);
+	ring.CRT(key->rax.get(), ax, nprimes);
+	ring.CRT(key->rbx.get(), bx, nprimes);
 	delete[] ax; delete[] bx;
 
 	if(isSerialized) {
@@ -71,8 +71,8 @@ void Scheme::addMultKey(SecretKey& secretKey) {
 	delete[] sxsx;
 
 	Key* key = new Key();
-	ring.CRT(key->rax, ax, nprimes);
-	ring.CRT(key->rbx, bx, nprimes);
+	ring.CRT(key->rax.get(), ax, nprimes);
+	ring.CRT(key->rbx.get(), bx, nprimes);
 	delete[] ax; delete[] bx;
 	if(isSerialized) {
 		string path = "serkey/MULTIPLICATION.txt";
@@ -100,8 +100,8 @@ void Scheme::addConjKey(SecretKey& secretKey) {
 	delete[] sxconj;
 
 	Key* key = new Key();
-	ring.CRT(key->rax, ax, nprimes);
-	ring.CRT(key->rbx, bx, nprimes);
+	ring.CRT(key->rax.get(), ax, nprimes);
+	ring.CRT(key->rbx.get(), bx, nprimes);
 	delete[] ax; delete[] bx;
 
 	if(isSerialized) {
@@ -130,8 +130,8 @@ void Scheme::addLeftRotKey(SecretKey& secretKey, long r) {
 	delete[] spow;
 
 	Key* key = new Key();
-	ring.CRT(key->rax, ax, nprimes);
-	ring.CRT(key->rbx, bx, nprimes);
+	ring.CRT(key->rax.get(), ax, nprimes);
+	ring.CRT(key->rbx.get(), bx, nprimes);
 	delete[] ax; delete[] bx;
 
 	if(isSerialized) {
@@ -255,9 +255,9 @@ void Scheme::encryptMsg(Ciphertext& cipher, Plaintext& plain) {
 	Key* key = isSerialized ? SerializationUtils::readKey(serKeyMap.at(ENCRYPTION)) : keyMap.at(ENCRYPTION);
 
 	long np = ceil((1 + logQQ + logN + 2)/(double)pbnd);
-	ring.multNTT(cipher.ax, vx, key->rax, np, qQ);
+	ring.multNTT(cipher.ax, vx, key->rax.get(), np, qQ);
 
-	ring.multNTT(cipher.bx, vx, key->rbx, np, qQ);
+	ring.multNTT(cipher.bx, vx, key->rbx.get(), np, qQ);
 	delete[] vx;
 
 	ring.addAndEqual(cipher.bx, plain.mx, qQ);
@@ -526,8 +526,8 @@ void Scheme::mult(Ciphertext& res, Ciphertext& cipher1, Ciphertext& cipher2) {
 	np = ceil((cipher1.logq + logQQ + logN + 2)/(double)pbnd);
 	uint64_t* raa = new uint64_t[np << logN];
 	ring.CRT(raa, axax, np);
-	ring.multDNTT(res.ax, raa, key->rax, np, qQ);
-	ring.multDNTT(res.bx, raa, key->rbx, np, qQ);
+	ring.multDNTT(res.ax, raa, key->rax.get(), np, qQ);
+	ring.multDNTT(res.bx, raa, key->rbx.get(), np, qQ);
 	ring.rightShiftAndEqual(res.ax, logQ);
 	ring.rightShiftAndEqual(res.bx, logQ);
 
@@ -578,8 +578,8 @@ void Scheme::multAndEqual(Ciphertext& cipher1, Ciphertext& cipher2) {
 	np = ceil((cipher1.logq + logQQ + logN + 2)/(double)pbnd);
 	uint64_t* raa = new uint64_t[np << logN];
 	ring.CRT(raa, axax, np);
-	ring.multDNTT(cipher1.ax, raa, key->rax, np, qQ);
-	ring.multDNTT(cipher1.bx, raa, key->rbx, np, qQ);
+	ring.multDNTT(cipher1.ax, raa, key->rax.get(), np, qQ);
+	ring.multDNTT(cipher1.bx, raa, key->rbx.get(), np, qQ);
 
 	ring.rightShiftAndEqual(cipher1.ax, logQ);
 	ring.rightShiftAndEqual(cipher1.bx, logQ);
@@ -631,8 +631,8 @@ void Scheme::square(Ciphertext& res, Ciphertext& cipher) {
 	np = ceil((cipher.logq + logQQ + logN + 2)/(double)pbnd);
 	uint64_t* raa = new uint64_t[np << logN];
 	ring.CRT(raa, axax, np);
-	ring.multDNTT(res.ax, raa, key->rax, np, qQ);
-	ring.multDNTT(res.bx, raa, key->rbx, np, qQ);
+	ring.multDNTT(res.ax, raa, key->rax.get(), np, qQ);
+	ring.multDNTT(res.bx, raa, key->rbx.get(), np, qQ);
 
 	ring.rightShiftAndEqual(res.ax, logQ);
 	ring.rightShiftAndEqual(res.bx, logQ);
@@ -677,8 +677,8 @@ void Scheme::squareAndEqual(Ciphertext& cipher) {
 
 	uint64_t* raa = new uint64_t[np << logN];
 	ring.CRT(raa, axax, np);
-	ring.multDNTT(cipher.ax, raa, key->rax, np, qQ);
-	ring.multDNTT(cipher.bx, raa, key->rbx, np, qQ);
+	ring.multDNTT(cipher.ax, raa, key->rax.get(), np, qQ);
+	ring.multDNTT(cipher.bx, raa, key->rbx.get(), np, qQ);
 
 	ring.rightShiftAndEqual(cipher.ax, logQ);
 	ring.rightShiftAndEqual(cipher.bx, logQ);
@@ -938,8 +938,8 @@ void Scheme::leftRotateFast(Ciphertext& res, Ciphertext& cipher, long r) {
 	long np = ceil((cipher.logq + logQQ + logN + 2)/(double)pbnd);
 	uint64_t* rarot = new uint64_t[np << logN];
 	ring.CRT(rarot, axrot, np);
-	ring.multDNTT(res.ax, rarot, key->rax, np, qQ);
-	ring.multDNTT(res.bx, rarot, key->rbx, np, qQ);
+	ring.multDNTT(res.ax, rarot, key->rax.get(), np, qQ);
+	ring.multDNTT(res.bx, rarot, key->rbx.get(), np, qQ);
 
 	ring.rightShiftAndEqual(res.ax, logQ);
 	ring.rightShiftAndEqual(res.bx, logQ);
@@ -962,8 +962,8 @@ void Scheme::leftRotateFastAndEqual(Ciphertext& cipher, long r) {
 	long np = ceil((cipher.logq + logQQ + logN + 2)/(double)pbnd);
 	uint64_t* rarot = new uint64_t[np << logN];
 	ring.CRT(rarot, axrot, np);
-	ring.multDNTT(cipher.ax, rarot, key->rax, np, qQ);
-	ring.multDNTT(cipher.bx, rarot, key->rbx, np, qQ);
+	ring.multDNTT(cipher.ax, rarot, key->rax.get(), np, qQ);
+	ring.multDNTT(cipher.bx, rarot, key->rbx.get(), np, qQ);
 
 	ring.rightShiftAndEqual(cipher.ax, logQ);
 	ring.rightShiftAndEqual(cipher.bx, logQ);
@@ -1000,8 +1000,8 @@ void Scheme::conjugate(Ciphertext& res, Ciphertext& cipher) {
 	long np = ceil((cipher.logq + logQQ + logN + 2)/(double)pbnd);
 	uint64_t* raconj = new uint64_t[np << logN];
 	ring.CRT(raconj, axconj, np);
-	ring.multDNTT(res.ax, raconj, key->rax, np, qQ);
-	ring.multDNTT(res.bx, raconj, key->rbx, np, qQ);
+	ring.multDNTT(res.ax, raconj, key->rax.get(), np, qQ);
+	ring.multDNTT(res.bx, raconj, key->rbx.get(), np, qQ);
 
 	ring.rightShiftAndEqual(res.ax, logQ);
 	ring.rightShiftAndEqual(res.bx, logQ);
@@ -1027,8 +1027,8 @@ void Scheme::conjugateAndEqual(Ciphertext& cipher) {
 	long np = ceil((cipher.logq + logQQ + logN + 2)/(double)pbnd);
 	uint64_t* raconj = new uint64_t[np << logN];
 	ring.CRT(raconj, axconj, np);
-	ring.multDNTT(cipher.ax, raconj, key->rax, np, qQ);
-	ring.multDNTT(cipher.bx, raconj, key->rbx, np, qQ);
+	ring.multDNTT(cipher.ax, raconj, key->rax.get(), np, qQ);
+	ring.multDNTT(cipher.bx, raconj, key->rbx.get(), np, qQ);
 
 	ring.rightShiftAndEqual(cipher.ax, logQ);
 	ring.rightShiftAndEqual(cipher.bx, logQ);

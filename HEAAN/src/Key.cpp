@@ -9,12 +9,9 @@
 
 namespace heaan {
 
-Key::Key() {
-}
-
-Key::~Key() {
-	delete[] rax;
-	delete[] rbx;
-}
+// Key::Key() :
+//     rax(std::make_unique<uint64_t[]>(heaan::Nnprimes)),
+//     rbx(std::make_unique<uint64_t[]>(heaan::Nnprimes)) {
+// }
 
 }  // namespace heaan
