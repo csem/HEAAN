@@ -9,9 +9,9 @@
 
 namespace heaan {
 
-// Key::Key() :
-//     rax(std::make_unique<uint64_t[]>(heaan::Nnprimes)),
-//     rbx(std::make_unique<uint64_t[]>(heaan::Nnprimes)) {
-// }
+    Key::Key() {
+        rax.reset(new uint64_t[heaan::Nnprimes]);
+        rbx.reset(new uint64_t[heaan::Nnprimes]);
+    }
 
 }  // namespace heaan

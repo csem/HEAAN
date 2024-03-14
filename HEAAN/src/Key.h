@@ -21,11 +21,7 @@ public:
     std::unique_ptr<uint64_t[]> rax;
     std::unique_ptr<uint64_t[]> rbx;
 
-    Key() {
-        rax.reset(new uint64_t[heaan::Nnprimes]);
-        rbx.reset(new uint64_t[heaan::Nnprimes]);
-    }
-
+    Key();
     ~Key() = default;  // Automatic memory deletion
 
     // Move constructor (new)
